@@ -1,0 +1,25 @@
+# Environment variables
+.env
+
+# Go build artifacts
+*.exe
+*.test
+*.out
+/server
+
+# Node.js
+node_modules/
+web/node_modules/
+web/dist/
+
+# Logs
+*.log
+
+# Agent tooling
+.opencode/
+
+# OS files
+.DS_Store
+Thumbs.db
+.envrc
+mise.local.toml

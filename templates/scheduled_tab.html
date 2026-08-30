@@ -1,0 +1,13 @@
+{{define "scheduled_tab"}}
+<div id="scheduled-tab-content" class="space-y-4">
+    {{if .ScheduledBills}}
+        {{range .ScheduledBills}}
+            {{template "bill_card" (dict "Bill" . "IsUrgent" (isUrgent .ScheduledVote) "VoteDate" (formatDate .ScheduledVote.Date))}}
+        {{end}}
+    {{else}}
+        <div class="text-center py-12 text-muted-foreground">
+            No bills currently scheduled for voting
+        </div>
+    {{end}}
+</div>
+{{end}}

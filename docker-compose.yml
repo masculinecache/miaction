@@ -1,0 +1,27 @@
+services:
+  app:
+    image: ghcr.io/masculinecache/miaction:latest
+    container_name: mibilltracker
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    env_file:
+      - .env
+    environment:
+      - PORT=${PORT:-8080}
+    labels:
+      proxy.mibilltracker.port: "${PORT:-8080}"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${PORT:-8080}/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

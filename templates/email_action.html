@@ -1,0 +1,17 @@
+{{define "email_action_content"}}
+<div class="space-y-6">
+    <a href="/" class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground no-underline">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Back to Bills
+    </a>
+
+    {{if .Bill}}
+    <div class="border rounded-lg p-4 bg-card">
+        <span class="text-sm font-medium text-muted-foreground">{{.Bill.Number}}</span>
+        <h1 class="text-lg font-semibold">{{.Bill.Title}}</h1>
+    </div>
+    {{end}}
+
+    {{template "email_step_location" .}}
+</div>
+{{end}}

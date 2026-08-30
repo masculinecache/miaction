@@ -1,0 +1,34 @@
+{{define "email_step_location"}}
+<div id="email-step-container" class="border rounded-lg p-6 space-y-4 bg-card max-w-md">
+    <div class="space-y-2">
+        <h2 class="text-xl font-semibold">Find Your Representatives</h2>
+        <p class="text-sm text-muted-foreground">
+            Enter your ZIP code to find your Michigan House and Senate representatives
+        </p>
+    </div>
+    <form hx-post="/email/{{.BillID}}/find-reps" hx-target="#email-step-container" hx-swap="outerHTML">
+        <div class="space-y-2">
+            <label class="text-sm font-medium flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M20 10c0 6-8 12-8 12s-8-6-8-10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                ZIP Code
+            </label>
+            <input
+                type="text"
+                name="zip"
+                value="{{.ZipCode}}"
+                placeholder="e.g., 48226"
+                maxlength="10"
+                required
+                class="w-full px-3 py-2 border rounded-md bg-background text-foreground"
+            />
+        </div>
+        {{if .Error}}
+        <p class="text-sm text-red-600 mt-2">{{.Error}}</p>
+        {{end}}
+        <button type="submit"
+            class="w-full mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 disabled:opacity-50">
+            Find Representatives
+        </button>
+    </form>
+</div>
+{{end}}

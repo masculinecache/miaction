@@ -1,0 +1,33 @@
+{{define "email_step_send"}}
+<div id="email-step-container" class="border rounded-lg p-6 space-y-4 bg-card">
+    <h2 class="text-xl font-semibold">Send Your Emails</h2>
+    <p class="text-muted-foreground">
+        Click each button below to open your email client with a pre-composed message to each representative.
+    </p>
+    <div class="space-y-3">
+        {{range .MailtoLinks}}
+        <a href="{{.Mailto}}"
+            class="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors no-underline">
+            <div class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-muted-foreground"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="font-medium">{{.Name}}</span>
+            </div>
+            <span class="flex items-center gap-2 text-sm text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                Open Email
+            </span>
+        </a>
+        {{end}}
+    </div>
+    <div class="flex gap-4 pt-4">
+        <a href="/email/{{.BillID}}"
+            class="px-4 py-2 border rounded-md font-medium hover:bg-accent no-underline">
+            Back to Compose
+        </a>
+        <a href="/"
+            class="px-4 py-2 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 no-underline">
+            Back to Bills
+        </a>
+    </div>
+</div>
+{{end}}

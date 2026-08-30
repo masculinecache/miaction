@@ -1,0 +1,130 @@
+{{define "email_step_compose"}}
+<div id="email-step-container" class="space-y-6">
+    <div class="border rounded-lg p-4 space-y-4 bg-card">
+        <h2 class="text-xl font-semibold">Your Representatives</h2>
+        <p class="text-sm text-muted-foreground">Toggle representatives to include or exclude from your emails.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {{range .Reps}}
+            <label class="border rounded-lg p-4 space-y-2 cursor-pointer transition-colors{{if isSelectedRep $.SelectedReps .ID}} border-primary bg-primary/5{{else}} hover:bg-accent{{end}}">
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" name="rep_ids" value="{{.ID}}"{{if isSelectedRep $.SelectedReps .ID}} checked{{end}}
+                        onchange="this.closest('label').classList.toggle('border-primary'); this.closest('label').classList.toggle('bg-primary/5'); this.form.querySelector('input[name=rep_count]').value = this.form.querySelectorAll('input[name=rep_ids]:checked').length;"
+                        class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary">
+                    <div>
+                        <div class="font-medium">{{.Name}}</div>
+                        <div class="text-sm text-muted-foreground">
+                            {{if eq .Chamber "house"}}House{{else}}Senate{{end}} District {{.District}} ({{.Party}})
+                        </div>
+                    </div>
+                </div>
+                <div class="text-sm space-y-1 pl-7">
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3 text-muted-foreground"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                        {{.Email}}
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3 text-muted-foreground"><path d="M20 10c0 6-8 12-8 12s-8-6-8-10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        {{.Office}}
+                    </div>
+                </div>
+            </label>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="border rounded-lg p-4 space-y-4 bg-card">
+        <h2 class="text-xl font-semibold">Compose Email</h2>
+        <form id="compose-form" hx-post="/email/{{.BillID}}/compose" hx-target="#email-step-container" hx-swap="outerHTML">
+            <input type="hidden" name="zip" value="{{.ZipCode}}">
+            <input type="hidden" name="rep_count" value="0">
+
+            <div class="space-y-2">
+                <label class="text-sm font-medium">Email Template</label>
+                <select name="template_id"
+                    class="w-full px-3 py-2 border rounded-md bg-background text-foreground">
+                    {{range .Templates}}
+                    <option value="{{.ID}}"{{if eq $.SelectedTemplate .ID}} selected{{end}}>{{.Name}}</option>
+                    {{end}}
+                </select>
+                {{if .CurrentTemplate}}
+                <p class="text-sm text-muted-foreground">{{.CurrentTemplate.Description}}</p>
+                {{end}}
+            </div>
+
+            {{range .TemplateVariables}}
+            <div class="space-y-2 mt-4">
+                <label class="text-sm font-medium flex items-center gap-1">
+                    {{.Name}}
+                    {{if .Required}}<span class="text-red-500">*</span>{{end}}
+                </label>
+                {{if eq .Name "PersonalMessage"}}
+                <textarea
+                    name="var_{{.Name}}"
+                    placeholder="{{.Description}}"
+                    rows="4"
+                    class="w-full px-3 py-2 border rounded-md bg-background text-foreground resize-y"
+                >{{getVar $.Variables .Name}}</textarea>
+                {{else}}
+                <input
+                    type="text"
+                    name="var_{{.Name}}"
+                    value="{{getVar $.Variables .Name}}"
+                    placeholder="{{.Description}}"
+                    class="w-full px-3 py-2 border rounded-md bg-background text-foreground"
+                />
+                {{end}}
+            </div>
+            {{end}}
+
+            <div class="flex gap-4 pt-4">
+                <button type="button" onclick="previewEmail()"
+                    class="flex items-center gap-2 px-4 py-2 border rounded-md font-medium hover:bg-accent">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Preview
+                </button>
+                <button type="submit"
+                    class="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Generate Emails
+                </button>
+            </div>
+        </form>
+
+        {{if .Preview}}
+        <div class="border rounded-lg p-4 space-y-2 bg-muted">
+            <h3 class="font-medium">Preview</h3>
+            <div class="text-sm">
+                <span class="font-medium">Subject:</span> {{.Preview.Subject}}
+            </div>
+            <pre class="text-sm whitespace-pre-wrap bg-background p-3 rounded border font-sans">{{.Preview.Body}}</pre>
+        </div>
+        {{end}}
+    </div>
+</div>
+
+<script>
+function previewEmail() {
+    var form = document.getElementById('compose-form');
+    if (!form) return;
+    var data = new URLSearchParams(new FormData(form));
+    var billId = '{{.BillID}}';
+    fetch('/email/' + billId + '/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: data.toString()
+    })
+    .then(function(r) { if (r.ok) return r.text(); throw new Error('Preview failed'); })
+    .then(function(html) {
+        var temp = document.createElement('div');
+        temp.innerHTML = html;
+        var previewEl = temp.querySelector('#preview-content');
+        if (previewEl) {
+            var existing = document.getElementById('preview-content');
+            if (existing) existing.outerHTML = temp.innerHTML;
+            else form.insertAdjacentHTML('afterend', temp.innerHTML);
+        }
+    })
+    .catch(function(e) { console.error('Preview error:', e); });
+}
+</script>
+{{end}}

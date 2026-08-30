@@ -1,0 +1,11 @@
+{{define "filter_results"}}
+{{if .Bills}}
+    {{range .Bills}}
+        {{template "bill_card" (dict "Bill" . "IsUrgent" (isUrgent .ScheduledVote) "VoteDate" (formatDate .ScheduledVote.Date))}}
+    {{end}}
+{{else}}
+    <div class="text-center py-12 text-muted-foreground">
+        No bills match your filter
+    </div>
+{{end}}
+{{end}}
