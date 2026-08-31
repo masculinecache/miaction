@@ -34,3 +34,7 @@ jobs:
         uses: github/codeql-action/analyze@v3
         with:
           category: '/language:${{ matrix.language }}'
+          # Upload results only where GitHub code scanning is available
+          # (public repos). Private repos without GHAS reject the upload
+          # and would fail the workflow otherwise.
+          upload: ${{ github.repository_visibility == 'public' }}
