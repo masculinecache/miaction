@@ -5,8 +5,10 @@ reviews:
     - "!**/*.lock"
     - "!**/package-lock.json"
     - "!**/bun.lockb"
-  review_instructions: |
-    Focus on Go + React full-stack security.
-    Check API endpoint authentication and authorization.
-    Verify database queries prevent injection.
-    Flag exposed secrets or insecure session handling.
+  path_instructions:
+    - path: "**/*"
+      instructions: |
+        Focus on Go + React full-stack security.
+        Check API endpoint authentication and authorization.
+        Verify database queries prevent injection.
+        Flag exposed secrets or insecure session handling.
