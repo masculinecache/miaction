@@ -13,3 +13,9 @@ GH_CONFIG_DIR=~/.config/gh-masculinecache gh pr merge ...
 ```
 
 Without this, `gh` defaults to `~/.config/gh` and operates under the wrong account.
+
+## Git commit identity
+
+Committing agents set `GIT_AUTHOR_NAME`/`GIT_COMMITTER_NAME` to `<model>@<hostname -s>` at commit time.
+
+## Secrets
